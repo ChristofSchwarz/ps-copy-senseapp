@@ -1,0 +1,19 @@
+{
+    "source": {
+        "server_url": "https://qs-internal.databridge.ch",
+        "vproxy": "hdr",
+        "auth_header": {
+            "hdr-usr": "MIG2\\migration"
+        }
+    },
+    "target": {
+        "server_url": "https://qs-internal.databridge.ch",
+        "vproxy": "hdr",
+        "auth_header": {
+            "hdr-usr": "MIG2\\migration"
+        }
+    },
+    "log": {
+        "file": "./log.csv"
+    }
+}
