@@ -25,26 +25,28 @@ if ((Test-Path "$appId.qvf") -and (Test-Path "$appId.json")) {
         -api "qrs/app/upload?name=$($appMeta.name)" -silent $true `
         -file "$appId.qvf" -contenttype "application/vnd.qlik.sense.app"
     
-    
+    $errors = 0
+
     if ($newApp.id) {
 
         # Save the new app id into .json file
         
         $logData = @{
-            "Timestamp" = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
-            "appName" = $appMeta.name
-            "srcAppId" = $appId
-            "srcServer" = $appMeta.server_url
-            "srcStream" = $appMeta.stream_name
+            "Timestamp"                 = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+            "appName"                   = $appMeta.name
+            "srcAppId"                  = $appId
+            "srcServer"                 = $appMeta.server_url
+            "srcStream"                 = $appMeta.stream_name
             "privateOrCommunityObjects" = $appMeta.objects.Count
-            "newAppId" = $newApp.id
-            "newSrv" = $config.server_url
+            "newAppId"                  = $newApp.id
+            "newSrv"                    = $config.server_url
         }
 
         # Check if the log file exists, if not, create a new file with headers
         if (-not (Test-Path $logFile)) {
             $logData | Export-Csv -Path $logFile -NoTypeInformation
-        } else {
+        }
+        else {
             # Append the log data to the existing log file
             $logData | Export-Csv -Path $logFile -NoTypeInformation -Append
         }
@@ -62,6 +64,7 @@ if ((Test-Path "$appId.qvf") -and (Test-Path "$appId.json")) {
         }
         else {
             Write-Host -f Red "Could not find former stream '$($appMeta.stream_name)'"
+            $errors++
         }
 
         # --------------------------------------------------------------------------------------------
@@ -77,6 +80,7 @@ if ((Test-Path "$appId.qvf") -and (Test-Path "$appId.json")) {
         }
         else {
             Write-Host -f Red "Could not find former owner $($appMeta.owner.userDirectory)\$($appMeta.owner.userId)"
+            $errors++
         }
 
         # --------------------------------------------------------------------------------------------
@@ -102,10 +106,13 @@ if ((Test-Path "$appId.qvf") -and (Test-Path "$appId.json")) {
                 -api "qrs/app/object?filter=app.id eq $($newApp.id) and engineObjectId eq '$($appObj.engineObjectId)'"
 
             if ($ownerInfo.Length -eq 0) {
-                Write-Host -f Red "Could not find former owner $($appMeta.owner.userDirectory)\$($appMeta.owner.userId)"
+                Write-Host -f Red "Could not find former owner $($appObj.owner.userDirectory)\$($appObj.owner.userId)"
+                $errors++
+                # Exception handling with user mapping needed here ...
             } 
             elseif ($newObjInfo.Length -eq 0) {
                 Write-Host -f Red "Could not find former engineObjectId $($appMeta.engineObjectId)"
+                $errors++
             } 
             else {
                 $newSettings = @{
@@ -134,14 +141,29 @@ if ((Test-Path "$appId.qvf") -and (Test-Path "$appId.json")) {
             }
         }
 
-        $response = $args[1]
-        while ($response -notin "Y", "N") {
-            $response = Read-Host "Do you want to remove the files? (Y/N)"
-            $response = $response.ToUpper()
+    
+        if ($errors -eq 0) {
+            $response = $args[1]
+            while ($response -notin "Y", "N") {
+                $response = Read-Host "Do you want to remove the files? (Y/N)"
+                $response = $response.ToUpper()
+            }
+            if ($response -eq "Y") {
+                Remove-Item "$appId.qvf"
+                Remove-Item "$appId.json"
+            }
         }
-        if ($response -eq "Y") {
-            Remove-Item "$appId.qvf"
-            Remove-Item "$appId.json"
+        else {
+            Write-Host -f Red "$errors Errors happened. Scroll up and check ..."
+            $response = ""
+            while ($response -notin "Y", "N") {
+                $response = Read-Host "Do you want to remove the incompletely imported app from $($config.server_url)? (Y/N)"
+                $response = $response.ToUpper()
+            }
+            if ($response -eq "Y") {
+                $res = QRS_API -conn $config -method "DELETE" -silent $true `
+                    -api "qrs/app/$($newApp.id)"    
+            }
         }
         
     } 
@@ -155,44 +177,4 @@ else {
     Exit
 }
 
-# Get app info
-# $appMeta = Get-Content -Path ".\_config.json" -Raw | ConvertFrom-Json -Depth 7
-
-# Write-Host -f Cyan "App: `"$($app.name)`" in stream `"$($app.stream.name)`"" 
-
-
-# [array] $appObjList = QRS_API -conn $config -silent $true -method "GET" `
-#     -api "qrs/app/object/full?filter=app.id eq $appId and approved eq false"
-
-# Write-Host -f Cyan $appObjList.Length " private/community objects found in app."
-
-# $appMeta = @{
-#     "appName" = $app.name;
-#     "owner"   = @{"userId" = $app.owner.userId; "userDirectory" = $app.owner.userDirectory }
-#     "objects" = @()
-# }
-
-# foreach ($appObj in $appObjList) {
-#     $appMeta.objects += @{
-#         "engineObjectId" = $appObj.engineObjectId;
-#         "objectType"     = $appObj.objectType;
-#         "owner"          = @{"userId" = $appObj.owner.userId; "userDirectory" = $appObj.owner.userDirectory };
-#         "name"           = $appObj.name;
-#         "approved"       = $appObj.approved;
-#         "published"      = $appObj.published
-#     }
-#     # Write-Host $appObj.engineObjectId $appObj.objectType $appObj.approved $appObj.published "`"$($appObj.name)`"" $appObj.owner.userDirectory $appObj.owner.userId
-# }
-
-# $appMeta | ConvertTo-Json -Depth 7 | Out-File -FilePath "$appId.json" -Encoding UTF8
-
-# Write-Host -f Green "Created `"$appId.json`""
-
-# $exportInfo = QRS_API -conn $config -method "POST" -silent $true `
-#     -api "qrs/app/$($appId)/export/$(New-Guid)?exportScope=all"
-
-
-# QRS_API -conn $config -method "GET" `
-#     -api "$($exportInfo.downloadPath.Substring(1))&exportToken=$($exportInfo.exportToken)" -download "$appId.qvf"
-
-Write-Host -f Green "Closing work."
+Write-Host -f Green "Finished script."

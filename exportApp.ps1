@@ -63,7 +63,7 @@ $exportInfo = QRS_API -conn $config -method "POST" -silent $true `
 QRS_API -conn $config -method "GET" `
     -api "$($exportInfo.downloadPath.Substring(1))&exportToken=$($exportInfo.exportToken)" -download "$appId.qvf"
 
-Write-Host -f Green "Closing work."
+Write-Host -f Green "Finished script."
 
 EXIT
 
