@@ -9,7 +9,7 @@ else {
 
 . .\functions\fn-qrs-api.ps1
 
-$config = Get-Content -Path ".\_config.json" -Raw | ConvertFrom-Json -Depth 7
+$config = Get-Content -Path ".\_config.json" -Raw | ConvertFrom-Json
 $config = $config.source
 # Parse the JSON content into a PowerShell object
 Write-Host "Export server is" $config.server_url
@@ -52,7 +52,7 @@ foreach($appObj in $appObjList) {
         # Write-Host $appObj.engineObjectId $appObj.objectType $appObj.approved $appObj.published "`"$($appObj.name)`"" $appObj.owner.userDirectory $appObj.owner.userId
 }
 
-$appMeta | ConvertTo-Json -Depth 7 | Out-File -FilePath "$appId.json" -Encoding UTF8
+$appMeta | ConvertTo-Json -Depth 5 | Out-File -FilePath "$appId.json" -Encoding UTF8
 
 Write-Host -f Green "Created `"$appId.json`""
 
