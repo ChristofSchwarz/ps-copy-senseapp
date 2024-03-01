@@ -18,16 +18,16 @@ Copy a Sense App from one Windows Server to another with all private and communi
 "default_owner": { "userDirectory": "Domain", "userId": "christof.schwarz" }
 }
 ```
- - `vproxy` is the prefix of the Virtual Proxy to use
- - `auth_header` is taken into the http header of the QRS API calls. Within auth_header specify
-   the name of the header field that was configured in the virtual proxy setting.
- - Give the user in the QMC of source and target sufficient rights, "ContentAdmin" is recommended
+   - `vproxy` is the prefix of the Virtual Proxy to use
+   - `auth_header` is taken into the http header of the QRS API calls. Within auth_header specify
+     the name of the header field that was configured in the virtual proxy setting.
+   - Give the user in the QMC of source and target sufficient rights, "ContentAdmin" is recommended
 3) Call `.\testAccess.ps1 -env {{environment}}` script
- - This will use _config.json and make a connection to the environment specified
- - it makes the QRS API call /qrs/apps/count and reports on the screen, how many apps the configured
-   user is able to see.
- - If this counter is 0 it indicates, that the given user hasn't enough rights (give "ContentAdmin"
-   rights)
+   - This will use _config.json and make a connection to the environment specified
+   - it makes the QRS API call /qrs/apps/count and reports on the screen, how many apps the configured
+     user is able to see.
+   - If this counter is 0 it indicates, that the given user hasn't enough rights (give "ContentAdmin"
+     rights)
 
 ## Export apps
 Call the script with 2 arguments
