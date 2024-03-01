@@ -15,9 +15,9 @@ else {
 }
 
 $s = QRS_API -conn $myEnv  -method "GET" `
-    -api "qrs/app/count" -trace 0
+    -api "qrs/app/count" -trace 2
 
-if ($a) {
+if ($s) {
     Write-Host "User " -NoNewLine
     Write-Host -f Cyan $($myEnv.auth_header.PSObject.Properties.Value) -NoNewLine 
     Write-Host " has access to " -NoNewLine
@@ -27,4 +27,7 @@ if ($a) {
         Write-Host -f Red $s.value -NoNewLine 
     }
     Write-Host " apps.`n"
+} 
+else {
+    Write-Host -f Red "no valid answer."
 }
