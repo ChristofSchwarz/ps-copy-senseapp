@@ -7,17 +7,27 @@ Copy a Sense App from one Windows Server to another with all private and communi
    - Dont forget to link the new virtual proxy to a proxy service
    - and dont forget to whitelist the external hostname by which you will call the server
 2) update `_config.json` file.
-   - The `auth_header` section under source and target needs to
-     match the settings you have provided in the virtual proxy (name of the header field
-     in case it was of type "header with Static directory" or "header with Dynamic directory"
-     is specified there)
-   - Give the user in the QMC of source and target sufficient rights, "ContentAdmin" is recommended
-3) Call `.\testAccess.ps1` script
-   - This will use _config.json and make a connection to both, source and target servers
-   - it makes the QRS API call /qrs/apps/count and reports on the screen, how many apps the configured
-     user is able to see.
-   - If this counter is 0 it indicates, that the given user hasn't enough rights (give "ContentAdmin"
-     rights)
+   - The `env` section make an entry for each environment (can be source or target or more).
+   - Each env must have the following settings:
+```
+{
+"server_url": "https://my.server.com"
+"vproxy": "proxyprefix"
+"auth_header": { "headerfield" : "headervalue" },
+"default_stream": "Everyone",
+"default_owner": { "userDirectory": "Domain", "userId": "christof.schwarz" }
+}
+```
+ - `vproxy` is the prefix of the Virtual Proxy to use
+ - `auth_header` is taken into the http header of the QRS API calls. Within auth_header specify
+   the name of the header field that was configured in the virtual proxy setting.
+ - Give the user in the QMC of source and target sufficient rights, "ContentAdmin" is recommended
+3) Call `.\testAccess.ps1 -env {{environment}}` script
+ - This will use _config.json and make a connection to the environment specified
+ - it makes the QRS API call /qrs/apps/count and reports on the screen, how many apps the configured
+   user is able to see.
+ - If this counter is 0 it indicates, that the given user hasn't enough rights (give "ContentAdmin"
+   rights)
 
 ## Export apps
 Call the script with 2 arguments
