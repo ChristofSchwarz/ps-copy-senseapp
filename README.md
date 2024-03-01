@@ -11,11 +11,13 @@ Copy a Sense App from one Windows Server to another with all private and communi
    - Each env must have the following settings:
 ```
 {
-"server_url": "https://my.server.com"
-"vproxy": "proxyprefix"
-"auth_header": { "headerfield" : "headervalue" },
-"default_stream": "Everyone",
-"default_owner": { "userDirectory": "Domain", "userId": "christof.schwarz" }
+"env_name": {
+   "server_url": "https://my.server.com"
+   "vproxy": "proxyprefix"
+   "auth_header": { "headerfield" : "headervalue" },
+   "default_stream": "Everyone",
+   "default_owner": { "userDirectory": "Domain", "userId": "christof.schwarz" }
+   }
 }
 ```
    - `vproxy` is the prefix of the Virtual Proxy to use
