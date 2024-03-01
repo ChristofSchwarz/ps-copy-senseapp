@@ -21,7 +21,9 @@ Copy a Sense App from one Windows Server to another with all private and communi
 
 ## Export apps
 Call the script with 2 arguments
-`.\exportApp.ps1 -env {{environment}} -appId {{appId}}` 
+```
+.\exportApp.ps1 -env {{environment}} -appId {{appId}}
+```
 
 - `env` specify one of the environments configured in `_config.json` under `env`
 - `appId` is the app-GUID of the app (the .qvf and .json file of that appId must be present in the
@@ -35,7 +37,9 @@ Call the script with 2 arguments
 
 ## Import apps
 Call the script with 2 or 3 arguments (the 3rd is optional) 
-`.\importApp.ps1 -env {{environment}} -appId {{appId}} [-delFiles [Y/N]]` 
+```
+.\importApp.ps1 -env {{environment}} -appId {{appId}} [-delFiles [Y/N]]
+``` 
 
 - `env` specify one of the environments configured in `_config.json` under `env`
 - `appId` is the app-GUID of the app (the .qvf and .json file of that appId must be present in the
