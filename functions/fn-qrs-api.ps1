@@ -12,9 +12,8 @@ function QRS_API {
         [Parameter(Mandatory = $false)] $file,
         [Parameter(Mandatory = $false)] $contenttype,
         [Parameter(Mandatory = $false)] [string] $download,
-        [Parameter(Mandatory = $false)] [bool] $silent = $false
-        # [Parameter(Mandatory = $false)] [bool] $noxrfkey = $false
-        # [Parameter(Mandatory = $false)] $debuginfo
+        [Parameter(Mandatory = $false)] $trace = 1
+        # trace parameter is for making screen output 0 = trace nothing, 1 = api call only, 2 = call + response
     ) 
 
     $url = $conn.server_url
@@ -51,8 +50,9 @@ function QRS_API {
         $hdrs["Content-Type"] = $contenttype
     }
   
-    Write-Host -f DarkGray $method $api 
-    # Write-Host -f DarkGray ($hdrs | ConvertTo-Json)
+    if ($trace -gt 0) {
+        Write-Host -f DarkGray $method $api 
+    }
     
     if ($download) {
 
@@ -87,7 +87,7 @@ function QRS_API {
             -Headers $hdrs 
     }
 
-    if ($res -and !$silent) {
+    if ($res -and ($trace -gt 1)) {
         Write-Host -f Green 'Response:'
         Write-Host "$(ConvertTo-Json $res -Depth 7)"
     }
