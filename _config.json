@@ -1,19 +1,56 @@
 {
-    "source": {
-        "server_url": "https://qs-internal.databridge.ch",
-        "vproxy": "hdr",
-        "auth_header": {
-            "hdr-usr": "MIG2\\migration"
+    "env": {
+        "sa_prod": {
+            "server_url": "https://standalone-bi.ci.zurich.com",
+            "vproxy": "migration",
+            "auth_header": {
+                "X-Qlik-Migration-User": "migrator1"
+            }
+        },
+        "sa_uat": {
+            "server_url": "https://standalone-bi.uat.ci-adm.zurich.com",
+            "vproxy": "migration",
+            "auth_header": {
+                "X-Qlik-Migration-User": "DHRUV.PATEL1"
+            }
+        },
+        "ci_dev": {
+            "server_url": "https://ci-reporting-dev.zurich.com",
+            "vproxy": "header",
+            "auth_header": {
+                "header": "content-admin"
+            },
+            "default_stream": "Everyone",
+            "default_owner": {
+                "userId": "dhruv.patel1",
+                "userDirectory": "GITDIR"
+            }
+        },
+        "ci_uat": {
+            "server_url": "https://ci-reporting-uat.zurich.com",
+            "vproxy": "header",
+            "auth_header": {
+                "header": "content-admin"
+            },
+            "default_stream": "Everyone",
+            "default_owner": {
+                "userId": "dhruv.patel1",
+                "userDirectory": "GITDIR"
+            }
+        },
+        "ci_prod": {
+            "server_url": "https://ci-reporting.zurich.com",
+            "vproxy": "header",
+            "auth_header": {
+                "header": "content-admin"
+            },
+            "default_stream": "60.Standalone",
+            "default_owner": {
+                "userDirectory": "GITDIR",
+                "userId": "dhruv.patel1"
+            }
         }
     },
-    "target": {
-        "server_url": "https://qs-internal.databridge.ch",
-        "vproxy": "hdr",
-        "auth_header": {
-            "hdr-usr": "MIG2\\migration"
-        }
-    },
-    "log": {
-        "file": "./log.csv"
-    }
+    "appLog": "./log_app.csv",
+    "objLog": "./log_obj.csv"
 }
